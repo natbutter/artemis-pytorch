@@ -1,0 +1,25 @@
+#A singularity script to run the repo
+#https://github.com/natbutter/artemis-pytorch.git
+#Developed in the docker cotainer
+#If you use this script you must acknowledge SIH 
+#"The authors acknowledge the technical assistance provided by the Sydney Informatics Hub, a Core Research Facility of the University of Sydney."
+
+#Build with:
+#sudo singularity build --writable pyfastslow.img pyfastslow.build
+
+#Run with
+#Mount the current directory in the container at /project, change directories and execute your script
+#singularity exec -B $PBS_O_WORKDIR:/project $PBS_O_WORKDIR/pyslowfast.img cd /project && python testGPU.py 
+
+
+###################
+
+Bootstrap: docker
+From: nbutter/pyfastslow 
+
+#Directories are mounted on Artemis and NCI, so we add them here to bind in at runtime.
+#Change these as required by your HPC cluster
+%post
+
+%runscript
+exec /bin/bash
