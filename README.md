@@ -13,7 +13,7 @@ sudo singularity build pyslowfast.img pyslowfast.build
 ```
 
 To run a Python script (e.g. testGPU.py) in the current directory mounting inside the container, with docker:
-``
+```
 sudo docker run -v `pwd`:/build pyslowfast python testGPU.py`
 ```
 
