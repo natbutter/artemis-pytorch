@@ -1,10 +1,10 @@
 Docker/Singularity repo for pytorch and https://github.com/facebookresearch/SlowFast
 
 If you have used this work, you must acknoledge SIH, e.g:
-"The authors acknowledge the technical assistance provided by the Sydney Informatics Hub, a Core Research Facility of the University of Sydney."
+*"The authors acknowledge the technical assistance provided by the Sydney Informatics Hub, a Core Research Facility of the University of Sydney."*
 
 
-To get this repo and scripts or to build
+To get this repo and scripts or to build locally
 ```
 git clone https://github.com/natbutter/artemis-pytorch.git
 sudo docker build  . -t pyslowfast 
