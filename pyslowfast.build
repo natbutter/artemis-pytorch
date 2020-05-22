@@ -19,7 +19,22 @@ From: nbutter/pyfastslow
 
 #Directories are mounted on Artemis and NCI, so we add them here to bind in at runtime.
 #Change these as required by your HPC cluster
+%setup
+#mkdir ${SINGULARITY_ROOTFS}/workspace
+
+%files
+%labels
+    Maintainer nathaniel.butterworth 
+    at the Sydney Informatics Hub
+    Version v1.0
+    Build with:
+    sudo singularity build --writable pyfastslow.img pyfastslow.build 
+    singularity exec --nv pyfastslow.img python
+
 %post
+
+%environment
+export PATH=/root/miniconda3/bin:$PATH
 
 %runscript
 exec /bin/bash

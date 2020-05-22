@@ -16,16 +16,16 @@ RUN apt-get update -y && \
 	rm -rf /var/lib/apt/lists/*
 	
 #Set some environemnt variables we will need
-ENV PATH="/root/miniconda3/bin:${PATH}"
-ARG PATH="/root/miniconda3/bin:${PATH}"
+ENV PATH="/build/miniconda3/bin:${PATH}"
+ARG PATH="/build/miniconda3/bin:${PATH}"
 ENV PYTHONPATH $PYTHONPATH:/build/slowfast/slowfast
 
-WORKDIR /root
+WORKDIR /build
 
 #Install Python3.6 we can use
 RUN curl -O https://repo.anaconda.com/miniconda/Miniconda3-4.3.27.1-Linux-x86_64.sh &&\
-	mkdir /root/.conda && \
-	bash Miniconda3-4.3.27.1-Linux-x86_64.sh -b &&\
+	mkdir /build/.conda && \
+	bash Miniconda3-4.3.27.1-Linux-x86_64.sh -b -p /build/miniconda3 &&\
 	rm -rf /Miniconda3-4.3.27.1-Linux-x86_64.sh
 
 WORKDIR /build

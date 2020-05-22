@@ -9,7 +9,7 @@ To get this repo and scripts or to build locally
 git clone https://github.com/natbutter/artemis-pytorch.git
 sudo docker build  . -t pyslowfast 
 #or
-sudo singularity build pyslowfast.img pyslowfast.build
+sudo singularity build --writable pyslowfast.img pyslowfast.build
 ```
 
 To run a Python script (e.g. testGPU.py) in the current directory mounting inside the container, with docker:
@@ -32,6 +32,6 @@ module load singularity
 cd $PBS_O_WORKDIR
 
 #Mount the current directory in the container at /project, change directories and run your script
-singularity exec -B $PBS_O_WORKDIR:/project $PBS_O_WORKDIR/pyslowfast.img cd /project && python testGPU.py 
+singularity exec --nv -B $PBS_O_WORKDIR:/project $PBS_O_WORKDIR/pyslowfast.img python testGPU.py 
 ```
  
