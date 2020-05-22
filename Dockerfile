@@ -1,93 +1,51 @@
-#docker build -t gmtsing .
+#docker build -t pyfastslow .
 
 #To run this, with an interactive python temrinal, mounting your current host directory in the container directory at /workspace use:
-#sudo docker run gmtsing python3 ptBayeslands_revamp.py -p 2 -s 1000 -r 10 -t 2 -swap 2 -b 0.25 -pt 0.5 -epsilon 0.5 -rain_intervals 4
+#sudo docker -it run pyfastslow python
 
 # Pull base image.
-FROM ubuntu:16.04
-MAINTAINER Nathaniel Butterworth
+FROM nvidia/cuda:10.1-devel-ubuntu16.04 
+MAINTAINER Nathaniel Butterworth USYD SIH
 
-#Create some directories to work with
-WORKDIR /build
+#Create some directories to work with on Artmeis
 RUN mkdir /project && mkdir /scratch
 
 #Install ubuntu libraires and packages
-#RUN apt-get update -y
-
-#Install GMT
-RUN apt-get update -qq && apt-get dist-upgrade -y && \
-    apt install vim gmt gmt-dcw gmt-gshhg netcdf-bin -y && \
-    echo "cat /etc/motd" >> /root/.bashrc
-
-#Install a bunch of depencies for python libraries
 RUN apt-get update -y && \
-	apt-get install libglew-dev python3-pip python3-dev libboost-dev libboost-thread-dev libboost-program-options-dev libboost-test-dev libboost-system-dev libqtgui4 libqt4-dev libgdal-dev libcgal-dev libproj-dev libqwt-dev libfreetype6-dev libfontconfig1-dev libxrender-dev libice-dev libsm-dev git wget -y
+	apt-get install git curl -y && \
+	rm -rf /var/lib/apt/lists/*
 	
+#Set some environemnt variables we will need
+ENV PATH="/root/miniconda3/bin:${PATH}"
+ARG PATH="/root/miniconda3/bin:${PATH}"
+ENV PYTHONPATH $PYTHONPATH:/build/slowfast/slowfast
 
-RUN apt-get install make libglu1-mesa-dev freeglut3-dev -y
+WORKDIR /root
 
-RUN wget https://www.open-mpi.org/software/ompi/v1.10/downloads/openmpi-1.10.3.tar.gz && \
-	tar -xzvf ./openmpi-1.10.3.tar.gz && \
-	cd openmpi-1.10.3 && \
-	./configure --prefix=/usr/local/mpi && \
-	make all && \
-	make install
+#Install Python3.6 we can use
+RUN curl -O https://repo.anaconda.com/miniconda/Miniconda3-4.3.27.1-Linux-x86_64.sh &&\
+	mkdir /root/.conda && \
+	bash Miniconda3-4.3.27.1-Linux-x86_64.sh -b &&\
+	rm -rf /Miniconda3-4.3.27.1-Linux-x86_64.sh
 
-#Download conda python and install it
-#RUN wget -O ~/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-4.7.10-Linux-x86_64.sh  && \
-#     chmod +x ~/miniconda.sh && \
-#     ~/miniconda.sh -b -p /opt/conda && \
-#     rm ~/miniconda.sh 
+WORKDIR /build
 
-#Set up the conda environemnt
-#COPY environment.yml environment.yml
-#RUN /opt/conda/bin/conda env create -f environment.yml
+#Install packages
+RUN conda install pip
+RUN pip install --upgrade pip
+RUN conda install pytorch=1.5.0 torchvision=0.6.0 cudatoolkit=10.1 -c pytorch
+RUN pip install simplejson==3.17.0 av==8.0.1 psutil==5.7.0 opencv-python==4.2.0.34 && \
+	pip install Cython==0.29.19 && \
+	pip install pycocotools==2.0.0
+RUN pip install -U 'git+https://github.com/facebookresearch/fvcore.git' 
+RUN git clone https://github.com/facebookresearch/detectron2 detectron2_repo && \
+	pip install -e detectron2_repo
+RUN git clone https://github.com/facebookresearch/slowfast &&\
+	cd slowfast && python setup.py build develop
 
-RUN pip3 install -U pip  # fixes AssertionError in Ubuntu pip
-RUN pip3 install enum34
-#RUN LLVM_CONFIG=llvm-config-3.6 pip3 install llvmlite==0.8.0
-RUN pip3 install jupyter markupsafe zmq singledispatch backports_abc certifi jsonschema ipyparallel path.py matplotlib  pandas plotly
-RUN apt-get install -y libnetcdf-dev python-mpltoolkits.basemap
-RUN pip3 install Cython==0.20
-RUN pip3 install h5py
-RUN pip3 install scipy
-RUN pip3 install numpy
-#RUN pip3 install numba
-RUN pip3 install gFlex
-#RUN pip3 install netcdf4
-RUN pip3 install colorlover
-RUN pip3 install cmocean
-RUN pip3 install scikit-fuzzy
-RUN pip3 install pyevtk
-
-RUN git clone https://github.com/intelligentEarth/Bayeslands_continental.git 
-RUN apt-get install -y gfortran 
-RUN cd /build/Bayeslands_continental/badlands/utils/ && make all
-#And actuall install Bayeslands to python
-RUN cd /build/Bayeslands_continental/ && pip3 install -e badlands/ 
-
-RUN cd /build && \
-	git clone https://github.com/phargogh/dbfpy3.git && \
-	pip3 install dbfpy3/
-
-RUN pip3 install plotly chart-studio
-
-RUN apt-get install -y gdal-bin python-gdal python3-gdal
-
-#Clean up Docker build and trim packages
-RUN rm -rf /var/lib/apt/lists/*
-
-#Set up GMT
-COPY version /etc/motd
-
-#Set up an empty working directory in the container
-WORKDIR /workspace
+#Run the container	
 CMD /bin/bash
 
-#Add everything to your path as needed
 
-ENV PATH /usr/local/mpi/bin:$PATH
-ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/local/mpi/lib:/build/Bayeslands_continental/badlands/utils
-ENV PYTHON_PATH $PYTHON_PATH:/build/Bayeslands_continental/badlands/utils
 
 

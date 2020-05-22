@@ -5,28 +5,10 @@
 #Build with:
 #sudo singularity build --writable gmtsing.img singbayes.build
 
-#Typically run on a HPC environemnt with something like this:
-
-################
-#!/bin/bash
-
-# Directives sent to pbs, the job scheduler on Artemis
-#PBS -P BGH 
-#PBS -N mybadlandsrun 
-#PBS -l select=1:ncpus=10:mem=60gb
-#PBS -l walltime=200:00:00
-#PBS -q alloc-dm
-
-#cd $PBS_O_WORKDIR
-#cd /project/RDS-FSC-BGH-RW/danial/Bayeslands_continental
-
-#module load singularity
-#singularity exec -B /project:/workspace gmtsing.img python3 ptBayeslands_revamp.py -p 2 -s 1000 -r 10 -t 2 -swap 2 -b 0.25 -pt 0.5 -epsilon 0.5 -rain_intervals 4
-#singularity exec gmtsing.img python3 visualise.py -p 2 -s 1000 -r 10 -t 2 -swap 2 -b 0.25 -pt 0.5 -epsilon 0.5 -rain_intervals 4
 ###################
 
 Bootstrap: docker
-From: nbutter/gmtsing
+From: nbutter/pyfastslow 
 
 #Directories are mounted on Artemis and NCI, so we add them here to bind in at runtime.
 #Change these as required by your HPC cluster

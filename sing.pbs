@@ -1,24 +1,21 @@
 #!/bin/bash
 
 #A singularity script to run the repo
-#https://github.com/intelligentEarth/Bayeslands_continental
+#https://github.com/natbutter/artemis-pytorch.git
 #Developed in the docker cotainer
+#If you use this script you must acknowledge SIH 
+#"The authors acknowledge the technical assistance provided by the Sydney Informatics Hub, a Core Research Facility of the University of Sydney."
 
-#PBS -P Training 
-#PBS -N mybadlandsrun10 
-#PBS -l select=1:ncpus=20:mem=100gb
-#PBS -l walltime=48:00:00
-#PBS -q defaultQ 
-
-cd $PBS_O_WORKDIR
-cd Bayeslands_continental
-pwd
+#PBS -P <yourproject>
+#PBS -N myrun
+#PBS -l select=1:ncpus=1:mem=1gb:ngpus=1
+#PBS -l walltime=00:01:00
+#PBS -q defaultQ
 
 module load singularity
+module load cuda/10.1.105
 
-#Mount the current folder (Bayesland_continetal) in the container and run analyiss there
-singularity exec -B $PBS_O_WORKDIR/Bayeslands_continental/:/workspace $PBS_O_WORKDIR/gmtsing.img python3 ptBayeslands_revamp.py -p 2 -s 10 -r 20 -t 2 -swap 2 -b 0.25 -pt 0.5 -epsilon 0.5 -rain_intervals 4
+cd $PBS_O_WORKDIR
 
-echo "done first section"
-
-#singularity exec -B $PBS_O_WORKDIR/Bayeslands_continental/:/project $PBS_O_WORKDIR/gmtsing.img python3 visualise.py -p 2 -s 10 -r 10 -t 2 -swap 2 -b 0.25 -pt 0.5 -epsilon 0.5 -rain_intervals 4
+#Mount the current directory in the container at /project, change directories and execute your script
+singularity exec -B $PBS_O_WORKDIR:/project $PBS_O_WORKDIR/pyslowfast.img cd /project && python testGPU.py 
