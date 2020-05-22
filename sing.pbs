@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#A singularity script to run the repo
+#https://github.com/intelligentEarth/Bayeslands_continental
+#Developed in the docker cotainer
+
+#PBS -P Training 
+#PBS -N mybadlandsrun10 
+#PBS -l select=1:ncpus=20:mem=100gb
+#PBS -l walltime=48:00:00
+#PBS -q defaultQ 
+
+cd $PBS_O_WORKDIR
+cd Bayeslands_continental
+pwd
+
+module load singularity
+
+#Mount the current folder (Bayesland_continetal) in the container and run analyiss there
+singularity exec -B $PBS_O_WORKDIR/Bayeslands_continental/:/workspace $PBS_O_WORKDIR/gmtsing.img python3 ptBayeslands_revamp.py -p 2 -s 10 -r 20 -t 2 -swap 2 -b 0.25 -pt 0.5 -epsilon 0.5 -rain_intervals 4
+
+echo "done first section"
+
+#singularity exec -B $PBS_O_WORKDIR/Bayeslands_continental/:/project $PBS_O_WORKDIR/gmtsing.img python3 visualise.py -p 2 -s 10 -r 10 -t 2 -swap 2 -b 0.25 -pt 0.5 -epsilon 0.5 -rain_intervals 4
