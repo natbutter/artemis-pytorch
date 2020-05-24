@@ -5,7 +5,7 @@
 #"The authors acknowledge the technical assistance provided by the Sydney Informatics Hub, a Core Research Facility of the University of Sydney."
 
 #Build with:
-#sudo singularity build --writable pyfastslow.img pyfastslow.build
+#sudo singularity build --writable pyslowfast.img pyslowfast.build
 
 #Run with
 #Mount the current directory in the container at /project, change directories and execute your script
@@ -28,8 +28,8 @@ From: nbutter/pyfastslow
     at the Sydney Informatics Hub
     Version v1.0
     Build with:
-    sudo singularity build --writable pyfastslow.img pyfastslow.build 
-    singularity exec --nv pyfastslow.img python
+    sudo singularity build --writable pyslowfast.img pyslowfast.build 
+    singularity exec --nv pyslowfast.img python
 
 %post
 
