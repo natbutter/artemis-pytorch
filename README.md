@@ -12,9 +12,9 @@ sudo docker build  . -t pyslowfast
 sudo singularity build --writable pyslowfast.img pyslowfast.build
 ```
 
-To run a Python script (e.g. testGPU.py) in the current directory mounting inside the container, with docker:
+To run a Python script (e.g. testGPU.py) that is in your current directory on your host by mounting inside the container in the project directory and then executing with docker:
 ```
-sudo docker run -v `pwd`:/build pyslowfast python testGPU.py`
+sudo docker run -v `pwd`:/project nbutter/pyfastslow /bin/bash -c "cd /project && python testGPU.py"
 ```
 
 
@@ -32,6 +32,6 @@ module load singularity
 cd $PBS_O_WORKDIR
 
 #Mount the current directory in the container at /project, change directories and run your script
-singularity exec --nv -B $PBS_O_WORKDIR:/project $PBS_O_WORKDIR/pyslowfast.img python testGPU.py 
+singularity exec -B `pwd`:/project ../pyslowfast.img /bin/bash -c "cd /project && python testGPU.py"
 ```
  
